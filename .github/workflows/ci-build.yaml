@@ -17,7 +17,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: "3.10"
+        python-version: "3.8"
 
     - name: Install dependencies
       run: |
@@ -33,6 +33,6 @@ jobs:
       run: |
         pylint service || true
 
-    - name: Run tests with nosetests
+    - name: Run tests with nose2
       run: |
-        nosetests --with-coverage --cover-package=service
+        nose2 -v

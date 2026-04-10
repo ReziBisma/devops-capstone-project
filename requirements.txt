@@ -1,5 +1,5 @@
 flask
-nose
+nose2
 coverage
 flake8
 pylint
