@@ -3,3 +3,4 @@ nose2
 coverage
 flake8
 pylint
+flask-cors
