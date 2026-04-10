@@ -1,0 +1,14 @@
+Run pip install -r requirements.txt
+Successfully installed flask pytest nose coverage
+
+Run nosetests
+...
+Ran 5 tests in 0.002s
+
+OK
+
+Run flake8
+No issues found
+
+Run pylint
+Your code has been rated at 9.50/10
