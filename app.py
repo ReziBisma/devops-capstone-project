@@ -2,39 +2,74 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-accounts = []
+# In-memory database
+accounts = {}
 next_id = 1
 
-# CREATE
-@app.route('/accounts', methods=['POST'])
+
+@app.route("/accounts", methods=["POST"])
 def create_account():
+    """Create a new account"""
     global next_id
+
     data = request.get_json()
-    
     account = {
         "id": next_id,
         "name": data.get("name"),
         "email": data.get("email"),
-        "address": data.get("address")
+        "address": data.get("address"),
     }
-    
-    accounts.append(account)
+
+    accounts[next_id] = account
     next_id += 1
-    
+
     return jsonify(account), 201
 
-# LIST
-@app.route('/accounts', methods=['GET'])
+
+@app.route("/accounts", methods=["GET"])
 def list_accounts():
-    return jsonify(accounts), 200
+    """List all accounts"""
+    return jsonify(list(accounts.values())), 200
 
-# READ
-@app.route('/accounts/<int:account_id>', methods=['GET'])
+
+@app.route("/accounts/<int:account_id>", methods=["GET"])
 def get_account(account_id):
-    for acc in accounts:
-        if acc["id"] == account_id:
-            return jsonify(acc), 200
-    return {"error": "Not found"}, 404
+    """Get a single account"""
+    account = accounts.get(account_id)
 
-if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
+    if not account:
+        return jsonify({"error": "Account not found"}), 404
+
+    return jsonify(account), 200
+
+
+@app.route("/accounts/<int:account_id>", methods=["PUT"])
+def update_account(account_id):
+    """Update an account"""
+    account = accounts.get(account_id)
+
+    if not account:
+        return jsonify({"error": "Account not found"}), 404
+
+    data = request.get_json()
+
+    account["name"] = data.get("name", account["name"])
+    account["email"] = data.get("email", account["email"])
+    account["address"] = data.get("address", account["address"])
+
+    return jsonify(account), 200
+
+
+@app.route("/accounts/<int:account_id>", methods=["DELETE"])
+def delete_account(account_id):
+    """Delete an account"""
+    if account_id not in accounts:
+        return jsonify({"error": "Account not found"}), 404
+
+    del accounts[account_id]
+
+    return jsonify({"message": "Account deleted successfully"}), 200
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
